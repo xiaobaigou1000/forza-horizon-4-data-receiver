@@ -5,6 +5,7 @@
 #include<map>
 #include<fmt/printf.h>
 #include<fmt/ranges.h>
+#include<spdlog/spdlog.h>
 
 class DataReceiver
 {
@@ -33,10 +34,16 @@ public:
         return { remote_endpoint,dataLength };
     }
 
-    inline std::string receiveAndProcessDataCLI(const std::vector<TelemetryType>& dataConcerned)
+    inline void receiveAndProcessDataCLI(const TelemetryType engineRPMInfo, const std::vector<TelemetryType>& dataConcerned)
     {
         auto [remote_endpoint, dataLength] = receivePackage();
         int8_t* dataPointer = datapackBuffer.data();
+
+        float engineRPM = *reinterpret_cast<float*>(dataPointer + engineRPMInfo.position);
+        if (engineRPM < 100.0f)
+        {
+            return;
+        }
 
         std::vector<std::string> dataCache;
 
@@ -69,7 +76,7 @@ public:
             }
         }
 
-        return fmt::format("{}", dataCache);
+        spdlog::info("{}", dataCache);
     }
 private:
     std::vector<int8_t> datapackBuffer;
