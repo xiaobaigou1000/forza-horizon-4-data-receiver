@@ -6,16 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 include(CTest)
 enable_testing()
 
-find_package(asio REQUIRED)
-find_package(fmt 7.1.3 REQUIRED)
-find_package(spdlog 1.8.0 REQUIRED)
-find_package(nlohmann_json 3.9.1 REQUIRED)
-
-add_executable(forza-data main.cpp)
-target_link_libraries(forza-data PRIVATE fmt::fmt asio::asio nlohmann_json::nlohmann_json spdlog::spdlog)
-
-add_executable(data-convert data_convert.cpp)
-target_link_libraries(data-convert PRIVATE nlohmann_json::nlohmann_json fmt::fmt)
+add_subdirectory(data_receiver_CLI)
+add_subdirectory(data_process)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

@@ -1,0 +1,432 @@
+[
+    {
+        "name": "IsRaceOn",
+        "scaler": 1.0,
+        "type": "s32"
+    },
+    {
+        "name": "TimestampMS",
+        "scaler": 1.0,
+        "type": "u32"
+    },
+    {
+        "name": "EngineMaxRpm",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "EngineIdleRpm",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "CurrentEngineRpm",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "AccelerationX",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "AccelerationY",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "AccelerationZ",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "VelocityX",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "VelocityY",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "VelocityZ",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "AngularVelocityX",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "AngularVelocityY",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "AngularVelocityZ",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "Yaw",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "Pitch",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "Roll",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "NormalizedSuspensionTravelFrontLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "NormalizedSuspensionTravelFrontRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "NormalizedSuspensionTravelRearLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "NormalizedSuspensionTravelRearRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireSlipRatioFrontLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireSlipRatioFrontRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireSlipRatioRearLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireSlipRatioRearRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "WheelRotationSpeedFrontLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "WheelRotationSpeedFrontRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "WheelRotationSpeedRearLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "WheelRotationSpeedRearRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "WheelOnRumbleStripFrontLeft",
+        "scaler": 1.0,
+        "type": "s32"
+    },
+    {
+        "name": "WheelOnRumbleStripFrontRight",
+        "scaler": 1.0,
+        "type": "s32"
+    },
+    {
+        "name": "WheelOnRumbleStripRearLeft",
+        "scaler": 1.0,
+        "type": "s32"
+    },
+    {
+        "name": "WheelOnRumbleStripRearRight",
+        "scaler": 1.0,
+        "type": "s32"
+    },
+    {
+        "name": "WheelInPuddleDepthFrontLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "WheelInPuddleDepthFrontRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "WheelInPuddleDepthRearLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "WheelInPuddleDepthRearRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "SurfaceRumbleFrontLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "SurfaceRumbleFrontRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "SurfaceRumbleRearLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "SurfaceRumbleRearRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireSlipAngleFrontLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireSlipAngleFrontRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireSlipAngleRearLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireSlipAngleRearRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireCombinedSlipFrontLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireCombinedSlipFrontRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireCombinedSlipRearLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireCombinedSlipRearRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "SuspensionTravelMetersFrontLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "SuspensionTravelMetersFrontRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "SuspensionTravelMetersRearLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "SuspensionTravelMetersRearRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "CarOrdinal",
+        "scaler": 1.0,
+        "type": "s32"
+    },
+    {
+        "name": "CarClass",
+        "scaler": 1.0,
+        "type": "s32"
+    },
+    {
+        "name": "CarPerformanceIndex",
+        "scaler": 1.0,
+        "type": "s32"
+    },
+    {
+        "name": "DrivetrainType",
+        "scaler": 1.0,
+        "type": "s32"
+    },
+    {
+        "name": "NumCylinders",
+        "scaler": 1.0,
+        "type": "s32"
+    },
+    {
+        "name": "HorizonPlaceholder",
+        "scaler": 1.0,
+        "type": "hzn"
+    },
+    {
+        "name": "PositionX",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "PositionY",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "PositionZ",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "Speed",
+        "scaler": 2.237,
+        "type": "f32"
+    },
+    {
+        "name": "Power",
+        "scaler": 0.0013410218586563,
+        "type": "f32"
+    },
+    {
+        "name": "Torque",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireTempFrontLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireTempFrontRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireTempRearLeft",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "TireTempRearRight",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "Boost",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "Fuel",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "DistanceTraveled",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "BestLap",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "LastLap",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "CurrentLap",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "CurrentRaceTime",
+        "scaler": 1.0,
+        "type": "f32"
+    },
+    {
+        "name": "LapNumber",
+        "scaler": 1.0,
+        "type": "u16"
+    },
+    {
+        "name": "RacePosition",
+        "scaler": 1.0,
+        "type": "u8"
+    },
+    {
+        "name": "Accel",
+        "scaler": 1.0,
+        "type": "u8"
+    },
+    {
+        "name": "Brake",
+        "scaler": 1.0,
+        "type": "u8"
+    },
+    {
+        "name": "Clutch",
+        "scaler": 1.0,
+        "type": "u8"
+    },
+    {
+        "name": "HandBrake",
+        "scaler": 1.0,
+        "type": "u8"
+    },
+    {
+        "name": "Gear",
+        "scaler": 1.0,
+        "type": "u8"
+    },
+    {
+        "name": "Steer",
+        "scaler": 1.0,
+        "type": "s8"
+    },
+    {
+        "name": "NormalizedDrivingLine",
+        "scaler": 1.0,
+        "type": "s8"
+    },
+    {
+        "name": "NormalizedAIBrakeDifference",
+        "scaler": 1.0,
+        "type": "s8"
+    }
+]
