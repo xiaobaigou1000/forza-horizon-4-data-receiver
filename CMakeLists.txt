@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(forza-data VERSION 0.1.0)
 
+set(CMAKE_CXX_STANDARD 17)
+
 include(CTest)
 enable_testing()
 
@@ -10,7 +12,7 @@ find_package(spdlog 1.8.0 REQUIRED)
 find_package(nlohmann_json 3.9.1 REQUIRED)
 
 add_executable(forza-data main.cpp)
-target_link_libraries(forza-data fmt::fmt asio::asio)
+target_link_libraries(forza-data PRIVATE fmt::fmt asio::asio nlohmann_json::nlohmann_json spdlog::spdlog)
 
 add_executable(data-convert data_convert.cpp)
 target_link_libraries(data-convert PRIVATE nlohmann_json::nlohmann_json fmt::fmt)
