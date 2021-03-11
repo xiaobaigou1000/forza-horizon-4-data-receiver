@@ -12,3 +12,6 @@ target_link_libraries(data-convert PRIVATE nlohmann_json::nlohmann_json fmt::fmt
 
 add_executable(data-convert2 data_convert2.cpp)
 target_link_libraries(data-convert2 PRIVATE nlohmann_json::nlohmann_json fmt::fmt)
+
+add_executable(config_code_generator config_code_generator.cpp)
+target_link_libraries(config_code_generator PRIVATE nlohmann_json::nlohmann_json fmt::fmt)

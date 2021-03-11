@@ -13,9 +13,13 @@
 #include <nlohmann/json.hpp>
 #include"telemetry_type.h"
 #include"data_receiver.h"
+#include"forza_horizon4_structure.h"
 
 int main()
 {
+    size_t size = sizeof(ForzaHorizon4Data);
+    spdlog::info("size of forza horizon 4 structure: {}", size);
+
     auto telemetryTypes = TelemetryType::parse_config("config.json");
 
     DataReceiver dataReceiver{ 9999 };

@@ -37,6 +37,7 @@ public:
     inline void receiveAndProcessDataCLI(const TelemetryType engineRPMInfo, const std::vector<TelemetryType>& dataConcerned)
     {
         auto [remote_endpoint, dataLength] = receivePackage();
+        spdlog::info("datapack size: {}", dataLength);
         int8_t* dataPointer = datapackBuffer.data();
 
         float engineRPM = *reinterpret_cast<float*>(dataPointer + engineRPMInfo.position);
