@@ -27,7 +27,7 @@ public:
         :port(port),
         endpoint(in_address, port),
         socket(io, endpoint),
-        Application(1200,900,"Data Receiver")
+        Application(1200, 900, "Data Receiver")
     {
         ImGui::GetIO().FontGlobalScale = 1.4f;
 
@@ -68,6 +68,7 @@ public:
                 std::vector<ForzaHorizon4Data> tmp;
                 tmp.resize(1024);
                 data.push_back(std::move(tmp));
+                currentDataArrayPosition = 0;
             }
             std::copy(receive_buffer.begin(), receive_buffer.end(), reinterpret_cast<int8_t*>(&(data.back()[currentDataArrayPosition])));
             currentDataArrayPosition += 1;
@@ -81,30 +82,187 @@ public:
         ImGui::Begin("Basic Data");
 
         auto beginTimePoint = data.front().front().TimestampMS;
-        if (ImPlot::BeginPlot("Line Plot", "x", "f(x)", ImVec2(ImGui::GetItemRectSize().x, 800)))
+        auto endTimePoint = beginTimePoint;
+        if (currentDataArrayPosition != 0)
         {
+            endTimePoint = data.back()[(size_t)currentDataArrayPosition - 1].TimestampMS;
+        }
+        else
+        {
+            endTimePoint = (data.end() - 1)->back().TimestampMS;
+        }
 
+        ImPlot::SetNextPlotLimitsY(0.0, 300.0, ImGuiCond_Always);
+        ImPlot::SetNextPlotLimitsX(beginTimePoint, endTimePoint, ImGuiCond_Always);
+        auto itemSize = ImGui::GetItemRectSize();
+        if (ImPlot::BeginPlot("Speed(MPH)", "x", "f(x)", ImVec2(-1, -1)))
+        {
             auto getter = [](void* data, int idx)
             {
                 ForzaHorizon4Data* fhd = reinterpret_cast<ForzaHorizon4Data*>(data);
-                double x = idx;
-                double y = (fhd + idx)->Speed;
+                double x = (fhd + idx)->convertTimestampMS();
+                double y = (fhd + idx)->convertSpeed();
                 return ImPlotPoint(x, y);
             };
 
             auto end = data.end() - 1;
             for (auto i = data.begin(); i < end; i++)
             {
-                ImPlot::PlotDigitalG("Speed", getter, i->data(), 1024);
+                ImPlot::SetNextLineStyle(ImVec4(1, 1, 0, 1), 3.0f);
+                ImPlot::PlotLineG("Speed", getter, i->data(), 1024);
             }
 
-            ImPlot::PlotDigitalG("Speed", getter, data.back().data(), currentDataArrayPosition);
+            ImPlot::SetNextLineStyle(ImVec4(1, 1, 0, 1), 3.0f);
+            ImPlot::PlotLineG("Speed", getter, data.back().data(), currentDataArrayPosition);
 
             ImPlot::EndPlot();
         }
         ImGui::End();
-    }
 
+        ImGui::Begin("Tire Temperature");
+        static ImGuiTableFlags flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg;
+        if (ImGui::BeginTable("Tire temp", 3, flags, ImVec2(-1, 0))) {
+            ImGui::TableSetupColumn("Tire", ImGuiTableColumnFlags_WidthFixed, 180.0f);
+            ImGui::TableSetupColumn("Temperature", ImGuiTableColumnFlags_WidthFixed, 180.0f);
+            ImGui::TableSetupColumn("Plot");
+            ImGui::TableHeadersRow();
+
+            auto frontLeftTireTempGetter = [](void* data, int idx)
+            {
+                ForzaHorizon4Data* fhd = reinterpret_cast<ForzaHorizon4Data*>(data);
+                double x = (fhd + idx)->convertTimestampMS();
+                double y = (fhd + idx)->convertTireTempFrontLeft();
+                return ImPlotPoint(x, y);
+            };
+
+            auto frontRightTireTempGetter = [](void* data, int idx)
+            {
+                ForzaHorizon4Data* fhd = reinterpret_cast<ForzaHorizon4Data*>(data);
+                double x = (fhd + idx)->convertTimestampMS();
+                double y = (fhd + idx)->convertTireTempFrontRight();
+                return ImPlotPoint(x, y);
+            };
+
+            auto rearLeftTireTempGetter = [](void* data, int idx)
+            {
+                ForzaHorizon4Data* fhd = reinterpret_cast<ForzaHorizon4Data*>(data);
+                double x = (fhd + idx)->convertTimestampMS();
+                double y = (fhd + idx)->convertTireTempRearLeft();
+                return ImPlotPoint(x, y);
+            };
+
+            auto rearRightTireTempGetter = [](void* data, int idx)
+            {
+                ForzaHorizon4Data* fhd = reinterpret_cast<ForzaHorizon4Data*>(data);
+                double x = (fhd + idx)->convertTimestampMS();
+                double y = (fhd + idx)->convertTireTempRearRight();
+                return ImPlotPoint(x, y);
+            };
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Front Left");
+            ImGui::TableSetColumnIndex(1);
+            if (currentDataArrayPosition == 0)
+                ImGui::Text("%f F", (data.end() - 1)->back().convertTireTempFrontLeft());
+            else
+                ImGui::Text("%f F", data.back()[currentDataArrayPosition-1].convertTireTempFrontLeft());
+            ImGui::TableSetColumnIndex(2);
+            ImPlot::SetNextPlotLimitsY(0.0, 200.0, ImGuiCond_Always);
+            ImPlot::SetNextPlotLimitsX(beginTimePoint, endTimePoint, ImGuiCond_Always);
+            if (ImPlot::BeginPlot("Tire Temperature front left", "time", "temp", ImVec2(-1, 100), ImPlotFlags_CanvasOnly | ImPlotFlags_NoChild, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations))
+            {
+                auto end = data.end() - 1;
+                for (auto i = data.begin(); i < end; i++)
+                {
+                    ImPlot::SetNextLineStyle(ImVec4(1, 1, 0, 1), 3.0f);
+                    ImPlot::PlotLineG("TireTempFrontLeft", frontLeftTireTempGetter, i->data(), 1024);
+                }
+
+                ImPlot::SetNextLineStyle(ImVec4(1, 1, 0, 1), 3.0f);
+                ImPlot::PlotLineG("TireTempFrontLeft", frontLeftTireTempGetter, data.back().data(), currentDataArrayPosition);
+                ImPlot::EndPlot();
+            }
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Front Right");
+            ImGui::TableSetColumnIndex(1);
+            if (currentDataArrayPosition == 0)
+                ImGui::Text("%f F", (data.end() - 1)->back().convertTireTempFrontRight());
+            else
+                ImGui::Text("%f F", data.back()[currentDataArrayPosition-1].convertTireTempFrontRight());
+            ImGui::TableSetColumnIndex(2);
+            ImPlot::SetNextPlotLimitsY(0.0, 200.0, ImGuiCond_Always);
+            ImPlot::SetNextPlotLimitsX(beginTimePoint, endTimePoint, ImGuiCond_Always);
+            if (ImPlot::BeginPlot("Tire Temperature front right", "time", "temp", ImVec2(-1, 100), ImPlotFlags_CanvasOnly | ImPlotFlags_NoChild, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations))
+            {
+                auto end = data.end() - 1;
+                for (auto i = data.begin(); i < end; i++)
+                {
+                    ImPlot::SetNextLineStyle(ImVec4(1, 1, 0, 1), 3.0f);
+                    ImPlot::PlotLineG("TireTempFrontRight", frontRightTireTempGetter, i->data(), 1024);
+                }
+
+                ImPlot::SetNextLineStyle(ImVec4(1, 1, 0, 1), 3.0f);
+                ImPlot::PlotLineG("TireTempFrontRight", frontRightTireTempGetter, data.back().data(), currentDataArrayPosition);
+                ImPlot::EndPlot();
+            }
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Rear Left");
+            ImGui::TableSetColumnIndex(1);
+            if (currentDataArrayPosition == 0)
+                ImGui::Text("%f F", (data.end() - 1)->back().convertTireTempRearLeft());
+            else
+                ImGui::Text("%f F", data.back()[currentDataArrayPosition-1].convertTireTempRearLeft());
+            ImGui::TableSetColumnIndex(2);
+            ImPlot::SetNextPlotLimitsY(0.0, 200.0, ImGuiCond_Always);
+            ImPlot::SetNextPlotLimitsX(beginTimePoint, endTimePoint, ImGuiCond_Always);
+            if (ImPlot::BeginPlot("Tire Temperature rear left", "time", "temp", ImVec2(-1, 100), ImPlotFlags_CanvasOnly | ImPlotFlags_NoChild, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations))
+            {
+                auto end = data.end() - 1;
+                for (auto i = data.begin(); i < end; i++)
+                {
+                    ImPlot::SetNextLineStyle(ImVec4(1, 1, 0, 1), 3.0f);
+                    ImPlot::PlotLineG("TireTempRearLeft", rearLeftTireTempGetter, i->data(), 1024);
+                }
+
+                ImPlot::SetNextLineStyle(ImVec4(1, 1, 0, 1), 3.0f);
+                ImPlot::PlotLineG("TireTempRearLeft", rearLeftTireTempGetter, data.back().data(), currentDataArrayPosition);
+                ImPlot::EndPlot();
+            }
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Rear Right");
+            ImGui::TableSetColumnIndex(1);
+            if (currentDataArrayPosition == 0)
+                ImGui::Text("%f F", (data.end() - 1)->back().convertTireTempRearRight());
+            else
+                ImGui::Text("%f F", data.back()[currentDataArrayPosition-1].convertTireTempRearRight());
+            ImGui::TableSetColumnIndex(2);
+            ImPlot::SetNextPlotLimitsY(0.0, 200.0, ImGuiCond_Always);
+            ImPlot::SetNextPlotLimitsX(beginTimePoint, endTimePoint, ImGuiCond_Always);
+            if (ImPlot::BeginPlot("Tire Temperature rear right", "time", "temp", ImVec2(-1, 100), ImPlotFlags_CanvasOnly | ImPlotFlags_NoChild, ImPlotAxisFlags_NoDecorations, ImPlotAxisFlags_NoDecorations))
+            {
+                auto end = data.end() - 1;
+                for (auto i = data.begin(); i < end; i++)
+                {
+                    ImPlot::SetNextLineStyle(ImVec4(1, 1, 0, 1), 3.0f);
+                    ImPlot::PlotLineG("TireTempRearRight", rearRightTireTempGetter, i->data(), 1024);
+                }
+
+                ImPlot::SetNextLineStyle(ImVec4(1, 1, 0, 1), 3.0f);
+                ImPlot::PlotLineG("TireTempRearRight", rearRightTireTempGetter, data.back().data(), currentDataArrayPosition);
+                ImPlot::EndPlot();
+            }
+
+            ImGui::EndTable();
+        }
+        ImGui::End();
+    }
 private:
     std::vector<int8_t> receive_buffer;
     std::deque<std::vector<ForzaHorizon4Data>> data;
