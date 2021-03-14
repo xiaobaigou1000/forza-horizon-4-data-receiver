@@ -8,6 +8,7 @@ enable_testing()
 
 add_subdirectory(data_receiver_CLI)
 add_subdirectory(data_process)
+add_subdirectory(data_receiver_GUI)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

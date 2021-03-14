@@ -40,6 +40,20 @@ public:
         return result;
     }
 
+    void run()
+    {
+        
+        while (true)
+        {
+            auto result = getData();
+            if (result.convertCurrentEngineRpm() < 100.0f)
+            {
+                continue;
+            }
+            spdlog::info("Engine RPM: {}, Power: {}, Speed: {}", result.convertCurrentEngineRpm(), result.convertPower(), result.convertSpeed());
+        }
+    }
+
 private:
     std::vector<int8_t> receive_buffer;
 };

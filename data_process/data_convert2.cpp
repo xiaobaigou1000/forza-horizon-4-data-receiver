@@ -5,7 +5,7 @@
 
 int main()
 {
-    std::ifstream file("forza-horizon-4-data-format.json");
+    std::ifstream file("config.json");
     std::vector<char> buffer;
     std::copy(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(), std::back_inserter(buffer));
     file.close();
@@ -13,7 +13,8 @@ int main()
     nlohmann::json origin = nlohmann::json::parse(buffer);
     for (auto& i : origin)
     {
-        i["scaler"] = 1.0f;
+        i.erase("scaler");
+        i["convert"] = "<data>";
     }
 
     std::ofstream output("config.json");

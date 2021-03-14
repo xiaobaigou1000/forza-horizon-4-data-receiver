@@ -31,10 +31,17 @@ int main()
     for (auto& i : config)
     {
         const std::string name = i["name"];
-
         const std::string type = i["type"];
 
-        if (type=="f32")
+        if (type == "hzn")
+        {
+            fields << fmt::format("int8_t {}[12];\n", name);
+            continue;
+        }
+
+        fieldConvertionFunctions << "inline constexpr ";
+
+        if (type == "f32")
         {
             fields << fmt::format("float {};\n", name);
             fieldConvertionFunctions << "float ";
@@ -67,19 +74,14 @@ int main()
             fieldConvertionFunctions << "int8_t ";
         }
 
-        if (type == "hzn")
-        {
-            fields << fmt::format("int8_t {}[12];\n", name);
-            continue;
-        }
-
-
         format_string << "{}, ";
         format_field << fmt::format("data.convert{}(),\n", name);
 
-        float scale = i["scaler"];
-        fieldConvertionFunctions << fmt::format("convert{}()", name) << " {\n";
-        fieldConvertionFunctions << fmt::format("return {:.16f}f * {};\n", scale, name);
+        std::string convertString = i["convert"];
+        std::regex originDataIndicator("<data>");
+
+        fieldConvertionFunctions << fmt::format("convert{}() const", name) << " {\n";
+        fieldConvertionFunctions << fmt::format("return {};\n", std::regex_replace(convertString, originDataIndicator, name));
         fieldConvertionFunctions << "}\n";
     }
 
