@@ -3,7 +3,6 @@
 #include<string>
 #include<fmt/format.h>
 
-__declspec(align(8))
 class ForzaHorizon4Data
 {
 public:
@@ -29,3 +28,8 @@ struct fmt::formatter<ForzaHorizon4Data>
         return format_to(ctx.out(), "<format_string_here>",<format_field_here>);
     }
 };
+
+std::string printCSVHeader()
+{
+    return "<csv_header>";
+}

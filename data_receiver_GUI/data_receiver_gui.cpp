@@ -28,7 +28,7 @@ public:
         std::chrono::milliseconds xLimitMax = receiver.currentTime.load();
         std::chrono::milliseconds xLimitMin = xLimitMax - 10s;
         ImPlot::SetNextPlotLimitsY(0.0, 300.0, ImGuiCond_Once);
-        ImPlot::SetNextPlotLimitsX(xLimitMin.count(), xLimitMax.count(), ImGuiCond_Always);
+        ImPlot::SetNextPlotLimitsX(static_cast<double>(xLimitMin.count()), static_cast<double>(xLimitMax.count()), ImGuiCond_Always);
         ImPlot::BeginPlot(chartName.data(), xLabel.data(), yLabel.data(), size);
 
         receiver.drawPlot(std::forward<DrawFunc>(drawFunc));
