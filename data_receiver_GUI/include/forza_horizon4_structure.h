@@ -2,7 +2,7 @@
 #include<string>
 #include<fmt/format.h>
 
-__declspec(align(8))
+__declspec(align(4))
 class ForzaHorizon4Data
 {
 public:

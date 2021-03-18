@@ -12,4 +12,4 @@ FetchContent_MakeAvailable(mahi-gui)
 
 add_executable(DataReceiverGUI "data_receiver_gui.cpp" "include/data_receiver.h" "include/plot_function_utilities.h")
 target_include_directories(DataReceiverGUI PRIVATE include)
-target_link_libraries(DataReceiverGUI PRIVATE mahi::gui fmt::fmt)
+target_link_libraries(DataReceiverGUI PRIVATE mahi::gui fmt::fmt spdlog::spdlog)

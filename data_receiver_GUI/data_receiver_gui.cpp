@@ -6,6 +6,8 @@
 #include<Mahi/Gui.hpp>
 #include<Mahi/Util.hpp>
 
+#include<string_view>
+
 class DataReceiverGUI :public mahi::gui::Application
 {
 public:
@@ -15,6 +17,22 @@ public:
         ImGui::GetIO().FontGlobalScale = 1.4f;
 
         receiver.start();
+    }
+
+    template<typename DrawFunc>
+    inline void drawSimpleXYPlot(std::string_view chartName, std::string_view xLabel, std::string_view yLabel, ImVec2 size, DrawFunc&& drawFunc)
+    {
+        using namespace std::chrono_literals;
+        //ImPlot::ShowMetricsWindow();
+
+        std::chrono::milliseconds xLimitMax = receiver.currentTime.load();
+        std::chrono::milliseconds xLimitMin = xLimitMax - 10s;
+        ImPlot::SetNextPlotLimitsY(0.0, 300.0, ImGuiCond_Once);
+        ImPlot::SetNextPlotLimitsX(xLimitMin.count(), xLimitMax.count(), ImGuiCond_Always);
+        ImPlot::BeginPlot(chartName.data(), xLabel.data(), yLabel.data(), size);
+
+        receiver.drawPlot(std::forward<DrawFunc>(drawFunc));
+        ImPlot::EndPlot();
     }
 
     virtual void update() override
@@ -36,21 +54,11 @@ public:
 
         if (ImGui::Begin("Test Plot"))
         {
-            using namespace std::chrono_literals;
-            //ImPlot::ShowMetricsWindow();
-
-            std::chrono::milliseconds xLimitMax = receiver.currentTime.load();
-            std::chrono::milliseconds xLimitMin = xLimitMax - 10s;
-            ImPlot::SetNextPlotLimitsY(0.0, 300.0, ImGuiCond_Once);
-            ImPlot::SetNextPlotLimitsX(xLimitMin.count(), xLimitMax.count(), ImGuiCond_Always);
-            ImPlot::BeginPlot("Speed","time(ms)","speed(mph)",ImVec2(-1,-1));
-
-            receiver.drawPlot([](ForzaHorizon4Data* data, size_t size) {
-                ImPlot::SetNextLineStyle(ImVec4(34.0/255.0, 131.0/255.0, 188.0 / 255.0, 1), 3.0f);
-                ImPlot::PlotLineG("Speed", MyGetterFunc<&ForzaHorizon4Data::convertTimestampMS, &ForzaHorizon4Data::convertSpeed>, data, size);
+            drawSimpleXYPlot("Speed", "time(ms)", "speed(mph)", ImVec2(-1, -1),
+                [](ForzaHorizon4Data* data, size_t size) {
+                    ImPlot::SetNextLineStyle(ImVec4(34.0 / 255.0, 131.0 / 255.0, 188.0 / 255.0, 1), 3.0f);
+                    ImPlot::PlotLineG("Speed", MyGetterFunc<&ForzaHorizon4Data::convertTimestampMS, &ForzaHorizon4Data::convertSpeed>, data, size);
                 });
-
-            ImPlot::EndPlot();
         }
         ImGui::End();
     }
@@ -60,4 +68,5 @@ int main()
 {
     DataReceiverGUI gui;
     gui.run();
+    gui.receiver.saveAndStop();
 }
