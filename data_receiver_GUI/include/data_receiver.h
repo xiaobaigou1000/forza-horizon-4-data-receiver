@@ -42,15 +42,25 @@ public:
         data.push_back(std::move(tmp));
     }
 
+    inline void timeoutCancelSocket(const asio::error_code& err)
+    {
+        using namespace std::chrono_literals;
+
+        if (err == asio::error::operation_aborted)
+        {
+            return;
+        }
+        socket.cancel();
+    }
+
     void receivePackage()
     {
         using namespace std::chrono_literals;
-        timeoutDetect.expires_after(1s);
-        timeoutDetect.async_wait([this](const asio::error_code&) {socket.cancel(); });
 
         while (continueReceiveData)
         {
             timeoutDetect.expires_after(1s);
+            timeoutDetect.async_wait([this](const asio::error_code& err) {timeoutCancelSocket(err); });
 
             asio::ip::udp::endpoint endpoint;
             size_t len = 0;
