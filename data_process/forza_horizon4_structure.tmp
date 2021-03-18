@@ -1,5 +1,4 @@
 #pragma once
-#include"telemetry_type.h"
 #include<string>
 #include<fmt/format.h>
 
