@@ -113,10 +113,10 @@ int main()
     std::regex_replace(std::back_inserter(tmp1), code_template_buffer.begin(), code_template_buffer.end(), fieldCodeRegex, fields.str() + fieldConvertionFunctions.str());
     std::vector<char> tmp2;
     std::string formatString = format_string.str();
-    std::regex_replace(std::back_inserter(tmp2), tmp1.begin(), tmp1.end(), formatStringRegex, formatString.substr(0, formatString.size() - 2));
+    std::regex_replace(std::back_inserter(tmp2), tmp1.begin(), tmp1.end(), formatStringRegex, formatString.substr(0, formatString.size() - 2)+std::string("\\n"));
     std::vector<char> tmp3;
     std::string csvHeaderTmp = csvHeader.str();
-    std::regex_replace(std::back_inserter(tmp3), tmp2.begin(), tmp2.end(), csvHeaderRegex, csvHeaderTmp.substr(0, csvHeaderTmp.size() - 2));
+    std::regex_replace(std::back_inserter(tmp3), tmp2.begin(), tmp2.end(), csvHeaderRegex, csvHeaderTmp.substr(0, csvHeaderTmp.size() - 2)+std::string("\\n"));
     std::vector<char> outputCodes;
     std::string formatField = format_field.str();
     std::regex_replace(std::back_inserter(outputCodes), tmp3.begin(), tmp3.end(), formatFieldRegex, formatField.substr(0, formatField.size() - 2));
