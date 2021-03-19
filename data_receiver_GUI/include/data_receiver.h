@@ -42,44 +42,24 @@ public:
         data.push_back(std::move(tmp));
     }
 
-    inline void timeoutCancelSocket(const asio::error_code& err)
-    {
-        using namespace std::chrono_literals;
-
-        if (err == asio::error::operation_aborted)
-        {
-            return;
-        }
-        socket.cancel();
-    }
-
     void receivePackage()
     {
         using namespace std::chrono_literals;
 
         while (continueReceiveData)
         {
-            timeoutDetect.expires_after(1s);
-            timeoutDetect.async_wait([this](const asio::error_code& err) {timeoutCancelSocket(err); });
-
             asio::ip::udp::endpoint endpoint;
-            size_t len = 0;
-            try {
-                len = socket.receive_from(asio::buffer(receive_buffer), endpoint);
-            }
-            catch (const std::exception& err)
+            asio::error_code err_code;
+            size_t len = socket.receive_from(asio::buffer(receive_buffer), endpoint, 0, err_code);
+            if (err_code != std::error_code{})
             {
-                spdlog::info("{}", err.what());
-            }
-
-            if (len == 0)
-            {
-                continue; //time out
+                spdlog::info("{}", err_code.message());
+                continue;
             }
 
             if (len != sizeof(ForzaHorizon4Data))
             {
-                spdlog::critical("Package size don't match, is this client out of date? Package size:{}, datapack size:{}",len,sizeof(ForzaHorizon4Data));
+                spdlog::critical("Package size don't match, is this client out of date? Package size:{}, datapack size:{}", len, sizeof(ForzaHorizon4Data));
                 continue;
             }
 
@@ -133,7 +113,7 @@ public:
     {
         using namespace std::chrono_literals;
         continueReceiveData = false;
-        std::this_thread::sleep_for(200ms);
+        socket.cancel();
         io.restart();
         for (auto& i : io_context_thread_pool)
         {
