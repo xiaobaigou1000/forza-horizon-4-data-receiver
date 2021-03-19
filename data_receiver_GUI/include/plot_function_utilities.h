@@ -1,18 +1,20 @@
 #include<Mahi/Gui.hpp>
 #include<Mahi/Util.hpp>
 
+#include<type_traits>
+
 template <typename T>
-struct MemberFunctionTraits;
+struct MemberFunctionTraits :std::false_type {};
 
 template <typename Return, typename Object>
-struct MemberFunctionTraits<Return(Object::*)()>
+struct MemberFunctionTraits<Return(Object::*)()> :std::true_type
 {
     using ReturnType = Return;
     using ObjectType = Object;
 };
 
 template <typename Return, typename Object>
-struct MemberFunctionTraits<Return(Object::*)() const>
+struct MemberFunctionTraits<Return(Object::*)() const> :std::true_type
 {
     using ReturnType = Return;
     using ObjectType = Object;
