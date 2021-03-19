@@ -1,5 +1,6 @@
 #pragma once
 #include"forza_horizon4_structure.h"
+#include"DataSaverCSV.h"
 
 #include<vector>
 #include<deque>
@@ -24,21 +25,24 @@ public:
     std::atomic<bool> continueReceiveData{ false };
     std::atomic<std::chrono::milliseconds> currentTime;
     const std::chrono::milliseconds dataReservePeriod;
-
     asio::steady_timer timeoutDetect{ io };
+    asio::io_context::strand strand;
+
+    DataSaverCSV dataSaver;
 
     DataReceiver(std::chrono::milliseconds dataReservePeriod, short port, asio::ip::address_v4 in_address = asio::ip::make_address_v4("0.0.0.0"))
         :dataReservePeriod(dataReservePeriod),
         currentTime(std::chrono::milliseconds{}),
         port(port),
         endpoint(in_address, port),
-        socket(io, endpoint)
+        socket(io, endpoint),
+        strand(io)
     {
         package_size = sizeof(ForzaHorizon4Data);
         receive_buffer.resize(package_size);
 
-        std::vector<ForzaHorizon4Data> tmp;
-        tmp.reserve(1024);
+        std::shared_ptr<std::vector<ForzaHorizon4Data>> tmp{ new std::vector<ForzaHorizon4Data>{} };
+        tmp->reserve(1024);
         data.push_back(std::move(tmp));
     }
 
@@ -51,7 +55,7 @@ public:
             asio::ip::udp::endpoint endpoint;
             asio::error_code err_code;
             size_t len = socket.receive_from(asio::buffer(receive_buffer), endpoint, 0, err_code);
-            if (err_code != std::error_code{})
+            if (err_code)
             {
                 spdlog::info("{}", err_code.message());
                 continue;
@@ -71,36 +75,32 @@ public:
             }
 
             std::unique_lock lock(dataMutex);
-            if (data.size() == 3)
-            {
-                data.pop_front();
-            }
-            if (data.back().size() == 1024)
+            if (data.back()->size() == 1024)
             {
                 std::shared_ptr<asio::steady_timer> timer(new asio::steady_timer{ io });
                 timer->expires_after(std::chrono::seconds(10));
-                timer->async_wait([this, timer](const asio::error_code& error) {
+                timer->async_wait(strand.wrap([this, timer](const asio::error_code& error) {
+                    std::shared_ptr<std::vector<ForzaHorizon4Data>> dataToSave;
                     {
-                        std::shared_lock readAndSave{ dataMutex };
-                        auto& dataToSave = data.front();
-                        //save data here
-                    }
-                    {
-                        std::unique_lock removeSavedData{ dataMutex };
+                        std::unique_lock readAndSave{ dataMutex };
+                        dataToSave = data.front();
                         data.pop_front();
-                    }});
+                    }
+                    dataSaver.saveData(dataToSave);
+                    }));
 
-                std::vector<ForzaHorizon4Data> tmp;
-                tmp.reserve(1024);
+                std::shared_ptr<std::vector<ForzaHorizon4Data>> tmp{ new std::vector<ForzaHorizon4Data>{} };
+                tmp->reserve(1024);
                 data.push_back(std::move(tmp));
             }
-            data.back().push_back(*receivedPackage);
+            data.back()->push_back(*receivedPackage);
         }
     }
 
     void start()
     {
         continueReceiveData = true;
+        dataSaver.createFile("Forza Horizon 4 ");
         io.post([this] {receivePackage(); });
 
         for (size_t i = 0; i < 4; i++)
@@ -114,17 +114,22 @@ public:
         using namespace std::chrono_literals;
         continueReceiveData = false;
         socket.cancel();
-        io.restart();
         for (auto& i : io_context_thread_pool)
         {
             i.join();
         }
         io_context_thread_pool.clear();
         std::unique_lock saveLock(dataMutex);
-        //save data here
+
+        for (auto& i : data)
+        {
+            dataSaver.saveData(i);
+        }
+        dataSaver.close();
+
         data.clear();
-        std::vector<ForzaHorizon4Data> tmp;
-        tmp.reserve(1024);
+        std::shared_ptr<std::vector<ForzaHorizon4Data>> tmp{ new std::vector<ForzaHorizon4Data>{} };
+        tmp->reserve(1024);
         data.push_back(std::move(tmp));
     }
 
@@ -134,13 +139,13 @@ public:
         std::shared_lock readLock(dataMutex);
         for (auto& i : data)
         {
-            callback(i.data(), i.size());
+            callback(i->data(), i->size());
         }
     }
 
 private:
     std::vector<int8_t> receive_buffer;
 
-    std::deque<std::vector<ForzaHorizon4Data>> data;
+    std::deque<std::shared_ptr<std::vector<ForzaHorizon4Data>>> data;
     std::shared_mutex dataMutex;
 };
