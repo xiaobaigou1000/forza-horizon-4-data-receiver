@@ -42,8 +42,15 @@ public:
         receive_buffer.resize(package_size);
 
         std::shared_ptr<std::vector<ForzaHorizon4Data>> tmp{ new std::vector<ForzaHorizon4Data>{} };
+        tmp->resize(1);
         tmp->reserve(1024);
         data.push_back(std::move(tmp));
+    }
+
+    ForzaHorizon4Data getLastData()
+    {
+        std::shared_lock lock(dataMutex);
+        return data.back()->back();
     }
 
     void receivePackage()
@@ -129,6 +136,7 @@ public:
 
         data.clear();
         std::shared_ptr<std::vector<ForzaHorizon4Data>> tmp{ new std::vector<ForzaHorizon4Data>{} };
+        tmp->resize(1);
         tmp->reserve(1024);
         data.push_back(std::move(tmp));
     }

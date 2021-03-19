@@ -2,6 +2,7 @@
 #include<Mahi/Util.hpp>
 
 #include<type_traits>
+#include"forza_horizon4_structure.h"
 
 template <typename T>
 struct MemberFunctionTraits :std::false_type {};
@@ -30,4 +31,10 @@ auto MyGetterFunc(void* rawDataPointer, int idx)
     XType x = ((data + idx)->*convertX)();
     YType y = ((data + idx)->*convertY)();
     return ImPlotPoint(static_cast<double>(x), static_cast<double>(y));
+}
+
+template<auto convertY>
+auto TimeStampBasedGetterFunc(void* rawDataPointer, int idx)
+{
+    return MyGetterFunc<&ForzaHorizon4Data::convertTimestampMS, convertY>(rawDataPointer, idx);
 }
