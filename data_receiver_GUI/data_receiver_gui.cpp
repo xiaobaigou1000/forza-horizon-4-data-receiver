@@ -56,8 +56,8 @@ public:
         {
             drawSimpleXYPlot("Speed", "time(ms)", "speed(mph)", ImVec2(-1, -1),
                 [](ForzaHorizon4Data* data, size_t size) {
-                    ImPlot::SetNextLineStyle(ImVec4(34.0 / 255.0, 131.0 / 255.0, 188.0 / 255.0, 1), 3.0f);
-                    ImPlot::PlotLineG("Speed", MyGetterFunc<&ForzaHorizon4Data::convertTimestampMS, &ForzaHorizon4Data::convertSpeed>, data, size);
+                    ImPlot::SetNextLineStyle(ImVec4(34.0f / 255.0f, 131.0f / 255.0f, 188.0f / 255.0f, 1.0f), 3.0f);
+                    ImPlot::PlotLineG("Speed", MyGetterFunc<&ForzaHorizon4Data::convertTimestampMS, &ForzaHorizon4Data::convertSpeed>, data, static_cast<int>(size));
                 });
         }
         ImGui::End();
