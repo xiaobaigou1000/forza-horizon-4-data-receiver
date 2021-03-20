@@ -29,10 +29,11 @@ public:
         std::chrono::milliseconds xLimitMin = xLimitMax - 10s;
         ImPlot::SetNextPlotLimitsY(ymin, ymax, ImGuiCond_Once);
         ImPlot::SetNextPlotLimitsX(static_cast<double>(xLimitMin.count()), static_cast<double>(xLimitMax.count()), ImGuiCond_Always);
-        ImPlot::BeginPlot(chartName.data(), xLabel.data(), yLabel.data(), size);
-
-        receiver.drawPlot(std::forward<DrawFunc>(drawFunc));
-        ImPlot::EndPlot();
+        if (ImPlot::BeginPlot(chartName.data(), xLabel.data(), yLabel.data(), size))
+        {
+            receiver.drawPlot(std::forward<DrawFunc>(drawFunc));
+            ImPlot::EndPlot();
+        }
     }
 
     template<typename MainFunc>
@@ -49,8 +50,8 @@ public:
             ImGui::TableHeadersRow();
 
             func();
+            ImGui::EndTable();
         }
-        ImGui::EndTable();
     }
 
     virtual void update() override
@@ -108,8 +109,8 @@ public:
                                 ImPlot::SetNextLineStyle(IMPLOT_AUTO_COL, 3.0f);
                                 ImPlot::PlotLineG(tableName.c_str(), GetterFunc, data, static_cast<int>(size));
                             });
+                        ImPlot::EndPlot();
                     }
-                    ImPlot::EndPlot();
                 };
 
                 PlotTempRow("FrontLeft", "%f F", last.convertTireTempFrontLeft(), "Front Left Tire Temp", TimeStampBasedGetterFunc<&ForzaHorizon4Data::convertTireTempFrontLeft>);
