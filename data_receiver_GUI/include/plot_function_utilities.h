@@ -1,3 +1,4 @@
+#pragma once
 #include<Mahi/Gui.hpp>
 #include<Mahi/Util.hpp>
 

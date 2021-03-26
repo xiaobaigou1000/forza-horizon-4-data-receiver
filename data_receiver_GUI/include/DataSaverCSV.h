@@ -1,3 +1,4 @@
+#pragma once
 #include"forza_horizon4_structure.h"
 
 #include<fstream>
